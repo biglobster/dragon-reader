@@ -167,7 +167,7 @@ async function urlToBook(url: string): Promise<[Book, Chapter[]]> {
     list.sort((a, b) => a.count - b.count);
     let {element, count} = list[0];
     for (const item of list) {
-        if (item.count > count * 1.3) {
+        if (item.count > count * 1.5) {
             element = item.element;
         }
         count = item.count;
@@ -274,7 +274,7 @@ async function main() {
     for (const config of [sogou, qihu, bing]) {
         for (const page of [1, 2]) {
             console.time(config.name);
-            urls.push(...await searchOnSearchEngine('小红帽 阅读', config, page));
+            urls.push(...await searchOnSearchEngine('沉默的大多数 阅读', config, page));
             console.timeEnd(config.name);
         }
     }
