@@ -59,37 +59,40 @@ function nodeListToArray<E extends Node>(list: NodeListOf<E>): Array<E> {
 }
 
 interface SearchEngineConfig {
-    name: string,
-    searchUrl: string,
-    parseRule: string,
+    name: string;
+    searchUrl: string;
+    pageRule: string;
+    pageScale: number;
+    parseRule: string;
 }
-
-const baidu: SearchEngineConfig = {
-    name: '百度搜索',
-    searchUrl: 'https://www.baidu.com/s?wd=',
-    parseRule: '.result h3 a'
-};
 
 const sogou: SearchEngineConfig = {
     name: '搜狗搜索',
     searchUrl: 'https://sogou.com/web?query=',
-    parseRule: '.vrwrap .vrTitle a'
+    pageRule: '&page=',
+    pageScale: 1,
+    parseRule: '.vrwrap .vrTitle a',
 };
 
 const qihu: SearchEngineConfig = {
     name: '360搜索',
     searchUrl: 'https://www.so.com/s?q=',
+    pageRule: '&pn=',
+    pageScale: 1,
     parseRule: '.res-list h3 a'
 };
 
 const bing: SearchEngineConfig = {
     name: '必应搜索',
     searchUrl: 'https://cn.bing.com/search?q=',
+    pageRule: '&first=',
+    pageScale: 10,
     parseRule: '.b_algo h2 a'
 };
 
-async function searchOnSearchEngine(keyword: string, config: SearchEngineConfig): Promise<[string, string][]> {
-    const dom = await fetchDOM(config.searchUrl + keyword);
+async function searchOnSearchEngine(keyword: string, config: SearchEngineConfig, page: number): Promise<[string, string][]> {
+    const pageQuery = config.pageRule + Math.round((page - 1) * config.pageScale + 1);
+    const dom = await fetchDOM(config.searchUrl + keyword + pageQuery);
     return nodeListToArray(dom.querySelectorAll(config.parseRule))
         .map(a => ([a.textContent, a.getAttribute('href')]));
 }
@@ -98,11 +101,15 @@ function filterRepeatSite(input: [string, string][]): [string, string][] {
     const set = new Set();
     const output = [];
     for (const x of input) {
-        const origin = new URL(x[1]).origin;
-        if (set.has(origin))
-            continue;
-        set.add(origin);
-        output.push(x);
+        try {
+            const origin = new URL(x[1]).origin;
+            if (set.has(origin))
+                continue;
+            set.add(origin);
+            output.push(x);
+        } catch (e) {
+
+        }
     }
     return output;
 }
@@ -225,7 +232,7 @@ function selectBestResults(results: [Book, Chapter[]][]): [Book, Chapter[]][] {
             const strX = x[1].map(item => item.title).join();
             const strY = y[1].map(item => item.title).join();
             const score = deltaScore(strX, strY);
-            if (score > 0.5) {
+            if (score > 0.4) {
                 continue;
             }
             const delta = Math.abs(x[1].length - y[1].length);
@@ -265,9 +272,11 @@ function selectBestResults(results: [Book, Chapter[]][]): [Book, Chapter[]][] {
 async function main() {
     let urls = [];
     for (const config of [sogou, qihu, bing]) {
-        console.time(config.name);
-        urls.push(...await searchOnSearchEngine('狂神 阅读', config));
-        console.timeEnd(config.name);
+        for (const page of [1, 2]) {
+            console.time(config.name);
+            urls.push(...await searchOnSearchEngine('小红帽 阅读', config, page));
+            console.timeEnd(config.name);
+        }
     }
     console.log(urls);
     urls = filterRepeatSite(urls);
