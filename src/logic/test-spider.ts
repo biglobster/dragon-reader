@@ -1,7 +1,10 @@
 import urlResolve from 'url-resolve-browser';
-import {DisjointSet} from './algorithm';
+import {DisjointSet} from './spider/utils/algorithm';
+import {searchKeyword} from "./spider/components/search-engine";
+import {fetchBook} from "./spider/components/fetch-book";
+import {fetchContent} from "./spider/components/fetch-content";
+import {filterContent} from "./spider/components/content-filter";
 
-// 为fetch添加超时功能, ref: http://imweb.io/topic/57c6ea35808fd2fb204eef63
 function fetchWithTimeout(url: string, timeout: number): Promise<Blob> {
     return Promise.race([
         fetch(url).then(response => response.blob()),
@@ -270,37 +273,36 @@ function selectBestResults(results: [Book, Chapter[]][]): [Book, Chapter[]][] {
 }
 
 async function main() {
-    let urls = [];
-    for (const config of [sogou, qihu, bing]) {
-        for (const page of [1, 2]) {
-            console.time(config.name);
-            urls.push(...await searchOnSearchEngine('沉默的大多数 阅读', config, page));
-            console.timeEnd(config.name);
-        }
-    }
-    console.log(urls);
-    urls = filterRepeatSite(urls);
-    console.log(urls);
+    // let searchResults = await searchKeyword('斗罗大陆');
+    // console.log(searchResults);
 
-    const tasks = [];
-    for (const [title, url] of urls) {
-        tasks.push(urlToBook(url).catch(e => null));
-    }
+    // console.log(await fetchBook('https://www.luoxia.com/dazhuzai/'));
+    const lines1 = await fetchContent('https://www.kuaiyankanshu.net/3112/read_4.html?url=http://www.vodtw.com/Html/Book/3/3892/2201135.html');
+    const lines2 = await fetchContent('https://www.luoxia.com/dazhuzai/4506.htm');
+    const lines3 = filterContent(lines1, lines2);
+    console.log(lines1);
+    console.log(lines2);
+    console.log(lines3);
 
-    console.time('fetch');
-    const results = (await Promise.all(tasks)).filter(x => x);
-    console.timeEnd('fetch');
-
-    console.log('pre', results.length);
-    for (const result of results) {
-        console.log(result);
-    }
-
-    const bestResults = selectBestResults(results);
-    console.log('best', bestResults.length);
-    for (const result of bestResults) {
-        console.log(result);
-    }
+    // const tasks = [];
+    // for (const [title, url] of urls) {
+    //     tasks.push(urlToBook(url).catch(e => null));
+    // }
+    //
+    // console.time('fetch');
+    // const results = (await Promise.all(tasks)).filter(x => x);
+    // console.timeEnd('fetch');
+    //
+    // console.log('pre', results.length);
+    // for (const result of results) {
+    //     console.log(result);
+    // }
+    //
+    // const bestResults = selectBestResults(results);
+    // console.log('best', bestResults.length);
+    // for (const result of bestResults) {
+    //     console.log(result);
+    // }
 }
 
 main().catch(e => console.warn(e));
