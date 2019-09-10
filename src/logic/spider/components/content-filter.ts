@@ -1,12 +1,12 @@
-import {lcs} from "../utils/algorithm";
+import {lcs} from '../utils/algorithm';
 
 export function filterContent(baseContent: string[], refContent: string[]): string[] {
-    const refSet = new Set<String>();
+    const refSet = new Set<string>();
     for (const line of refContent) {
         refSet.add(line);
     }
 
-    const commonSet = new Set<String>();
+    const commonSet = new Set<string>();
     for (const line of baseContent) {
         if (refSet.has(line)) {
             commonSet.add(line);

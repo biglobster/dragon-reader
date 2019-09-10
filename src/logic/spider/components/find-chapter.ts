@@ -1,4 +1,4 @@
-import {Source} from "../../define";
+import {Source} from '../../define';
 
 export function findChapters(sources: Source[], mainSourceIndex: number, mainChapterIndex: number): number[] {
     const baseSource = sources[mainSourceIndex];

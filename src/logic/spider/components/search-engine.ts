@@ -1,7 +1,7 @@
-import {nodeListToArray, pureAttr, pureText} from "../utils/dom";
-import {fetchDOM} from "../utils/http";
-import {SearchResult} from "../../define";
-import {invokeAll} from "../utils/invoke";
+import {nodeListToArray, pureAttr, pureText} from '../utils/dom';
+import {fetchDOM} from '../utils/http';
+import {SearchResult} from '../../define';
+import {invokeAll} from '../utils/invoke';
 
 interface SearchEngineConfig {
     name: string;
@@ -52,8 +52,9 @@ function filterRepeatSite(input: SearchResult[]): SearchResult[] {
     for (const x of input) {
         try {
             const origin = new URL(x.url).origin;
-            if (set.has(origin))
+            if (set.has(origin)) {
                 continue;
+            }
             set.add(origin);
             output.push(x);
         } catch (e) {
@@ -74,7 +75,7 @@ export async function searchKeyword(keyword) {
     const taskResults = await invokeAll(tasks);
     for (const taskResult of taskResults) {
         if (!taskResult[0]) {
-            results.push(...taskResult[2])
+            results.push(...taskResult[2]);
         }
     }
     results = filterRepeatSite(results);

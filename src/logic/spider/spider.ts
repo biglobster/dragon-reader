@@ -1,18 +1,18 @@
-import {Book, Source} from "../define";
-import {searchKeyword} from "./components/search-engine";
-import {selectBestGroup} from "./components/group-books";
-import {mergeBook} from "./components/merge-books";
-import {findChapters} from "./components/find-chapter";
-import {filterContent} from "./components/content-filter";
-import {fetchContent} from "./components/fetch-content";
-import {fetchBook} from "./components/fetch-book";
+import {Book, Source} from '../define';
+import {searchKeyword} from './components/search-engine';
+import {selectBestGroup} from './components/group-books';
+import {mergeBook} from './components/merge-books';
+import {findChapters} from './components/find-chapter';
+import {filterContent} from './components/content-filter';
+import {fetchContent} from './components/fetch-content';
+import {fetchBook} from './components/fetch-book';
 
 export class Spider {
     async fetchBook(keyword): Promise<Book> {
-        let searchResults = await searchKeyword(keyword);
+        const searchResults = await searchKeyword(keyword);
         let books: Book[] = await Promise.all(searchResults.map(searchResult => fetchBook(searchResult.url).catch(e => null)));
         console.log(books);
-        books = selectBestGroup(books.filter(book => book));
+        books = selectBestGroup(books.filter(x => x));
         console.log(books);
         const book = await mergeBook(books);
         console.log(book);

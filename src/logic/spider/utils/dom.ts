@@ -1,7 +1,8 @@
 export function nodeListToArray<E extends Node>(list: NodeListOf<E>): Array<E> {
     const result = [];
-    for (let i = 0; i < list.length; i++)
+    for (let i = 0; i < list.length; i++) {
         result.push(list.item(i));
+    }
     return result;
 }
 
@@ -16,7 +17,7 @@ export function queryChild(element: Element | Document): Element[] {
     const result: Element[] = [];
     const elements = element.childNodes;
     for (let i = 0; i < elements.length; i++) {
-        result.push(<Element>elements.item(i));
+        result.push(elements.item(i) as Element);
     }
     return result;
 }

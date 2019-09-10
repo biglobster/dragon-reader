@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {Book} from "../logic/define";
-import {Spider} from "../logic/spider/spider";
+import {Book} from '../logic/define';
+import {Spider} from '../logic/spider/spider';
 
 @Component({
     selector: 'app-root',

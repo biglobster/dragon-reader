@@ -1,9 +1,9 @@
 import uuid from 'uuid';
 import urlResolve from 'url-resolve-browser';
 
-import {Book, Chapter} from "../../define";
-import {nodeListToArray} from "../utils/dom";
-import {fetchDOM} from "../utils/http";
+import {Book, Chapter} from '../../define';
+import {nodeListToArray} from '../utils/dom';
+import {fetchDOM} from '../utils/http';
 
 function parseBookInfo(dom: Document): Book {
     const domMeta = new Map<string, string>();
@@ -25,7 +25,7 @@ function parseBookInfo(dom: Document): Book {
             category: domMeta.get('og:novel:category'),
             description: domMeta.get('og:description')
         }
-    }
+    };
 }
 
 function dfs(current: HTMLElement, list) {
@@ -33,10 +33,11 @@ function dfs(current: HTMLElement, list) {
     let count = 0;
     if (isA) {
         const digital = containsDigital(current.textContent);
-        if (digital)
+        if (digital) {
             count = 1;
-        else
-            count = 0.1
+        } else {
+            count = 0.1;
+        }
     }
     for (const element of nodeListToArray(current.childNodes)) {
         count += dfs(element as HTMLElement, list);

@@ -1,9 +1,9 @@
 import uuid from 'uuid';
-import {Book, BookInformation, Source} from "../../define";
-import {normalizeChapter} from "./chapter-normalize";
-import {findChapters} from "./find-chapter";
-import {fetchContent} from "./fetch-content";
-import {DisjointSet} from "../utils/algorithm";
+import {Book, BookInformation, Source} from '../../define';
+import {normalizeChapter} from './chapter-normalize';
+import {findChapters} from './find-chapter';
+import {fetchContent} from './fetch-content';
+import {DisjointSet} from '../utils/algorithm';
 
 async function selectBestSources(sources: Source[]): Promise<Source[]> {
 
@@ -19,10 +19,11 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
         const tasks = [];
         for (let i = 0; i < sources.length; i++) {
             const chapter = sources[i].chapters[positions[i]];
-            if (!chapter)
+            if (!chapter) {
                 tasks.push([]);
-            else
+            } else {
                 tasks.push(fetchContent(chapter.url).catch(e => []));
+            }
         }
         const contents = await Promise.all(tasks);
         const lens = contents.map(content => content.join().length);
@@ -32,11 +33,13 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
     }
 
     const set = new DisjointSet(qualities);
-    for (let i = 0; i < qualities.length; i++)
-        for (let j = i + 1; j < qualities.length; j++)
+    for (let i = 0; i < qualities.length; i++) {
+        for (let j = i + 1; j < qualities.length; j++) {
             if (qualities[i] / qualities[j] < 1.1 && qualities[i] / qualities[j] > 0.9) {
                 set.merge(qualities[i], qualities[j]);
             }
+        }
+    }
 
     const map = new Map();
     for (const quality of qualities) {
@@ -47,10 +50,11 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
         map.set(group, map.get(group) + 1);
     }
     let bestGroup = -1;
-    for (const group of map.keys())
+    for (const group of map.keys()) {
         if (bestGroup === -1 || map.get(group) > map.get(bestGroup)) {
             bestGroup = group;
         }
+    }
     // for (let i = 0; i < qualities.length; i++) {
     //     if (set.find(qualities[i]) === bestGroup) {
     //         console.log('SUCC', sources[i]);
@@ -65,7 +69,9 @@ export async function mergeBook(books: Book[]): Promise<Book> {
     const information: BookInformation = {};
     for (const book of books) {
         for (const key in book.information) {
-            information[key] = information[key] || book.information[key]
+            if (book.information.hasOwnProperty(key)) {
+                information[key] = information[key] || book.information[key];
+            }
         }
     }
     let sources: Source[] = [];
@@ -86,5 +92,5 @@ export async function mergeBook(books: Book[]): Promise<Book> {
         author: information.author || '佚名',
         information,
         sources
-    }
+    };
 }

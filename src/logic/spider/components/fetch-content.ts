@@ -1,11 +1,12 @@
-import {pureText} from "../utils/dom";
-import {fetchDOM} from "../utils/http";
+import {pureText} from '../utils/dom';
+import {fetchDOM} from '../utils/http';
 
 const reg = /[\u4e00-\u9fa5]/g;
 
 function chineseLength(str) {
-    if (!str)
+    if (!str) {
         return 0;
+    }
     str = str.trim();
     const len1 = str.length;
     const len2 = str.replace(reg, '').length;
@@ -15,8 +16,9 @@ function chineseLength(str) {
 
 function dfs(current, list) {
     let count = chineseLength(pureText(current));
-    if (count < 10)
+    if (count < 10) {
         count *= 0.1;
+    }
     for (const element of current.childNodes) {
         count += dfs(element, list);
     }
@@ -46,7 +48,7 @@ export async function fetchContent(url: string): Promise<string[]> {
         }
         count = item.count;
     }
-    let lines = [];
+    const lines = [];
     dfs2(element, lines);
     return lines.map(text => text && text.trim()).filter(text => text);
 }

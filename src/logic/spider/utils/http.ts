@@ -1,4 +1,4 @@
-import {nodeListToArray} from "./dom";
+import {nodeListToArray} from './dom';
 
 function fetchWithTimeout(url: string, timeout: number): Promise<Blob> {
     return Promise.race([
@@ -23,7 +23,7 @@ async function blobToText(blob: Blob, encoding: string): Promise<string> {
 export async function fetchDOM(url: string, retry: number = 0): Promise<Document> {
     const blob = await fetchWithTimeout(url, 2000);
     const html1 = await blobToText(blob, 'utf-8');
-    let dom = new DOMParser().parseFromString(html1, 'text/html');
+    const dom = new DOMParser().parseFromString(html1, 'text/html');
     let charset = null;
     try {
         charset = dom.head.querySelector('[charset]').getAttribute('charset');
@@ -33,7 +33,7 @@ export async function fetchDOM(url: string, retry: number = 0): Promise<Document
         try {
             // <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
             for (const m of nodeListToArray(dom.head.querySelectorAll('meta'))) {
-                if (m.getAttribute('http-equiv') == 'Content-Type') {
+                if (m.getAttribute('http-equiv') === 'Content-Type') {
                     const c = m.getAttribute('content');
                     const i = c.indexOf('charset=');
                     charset = c.slice(i + 8);

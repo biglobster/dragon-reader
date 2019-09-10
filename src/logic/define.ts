@@ -20,9 +20,7 @@ export interface BookInformation {
     category?: string; // 分类，例如玄幻
 }
 
-export interface ReadStatus {
-
-}
+// export interface ReadStatus {}
 
 export interface Source {
     url: string; // 目录页链接
