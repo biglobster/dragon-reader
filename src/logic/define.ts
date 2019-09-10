@@ -13,6 +13,8 @@ export interface Book {
 }
 
 export interface BookInformation {
+    title?: string;  // 标题
+    author?: string; // 作者
     cover?: string; // 封面
     description?: string; // 描述
     category?: string; // 分类，例如玄幻
@@ -25,6 +27,7 @@ export interface ReadStatus {
 export interface Source {
     url: string; // 目录页链接
     chapters: Chapter[]; // 章节列表
+    latency: number;
 }
 
 export interface Chapter {

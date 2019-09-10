@@ -16,9 +16,11 @@ function parseBookInfo(dom: Document): Book {
     }
     return {
         _id: uuid.v4(),
-        title: domMeta.get('og:novel:book_name'),
-        author: domMeta.get('og:novel:author'),
+        title: null,
+        author: null,
         information: {
+            title: domMeta.get('og:novel:book_name'),
+            author: domMeta.get('og:novel:author'),
             cover: domMeta.get('og:image'),
             category: domMeta.get('og:novel:category'),
             description: domMeta.get('og:description')
@@ -56,7 +58,7 @@ function parseChapters(url: string, dom: Document): Chapter[] {
     list.sort((a, b) => a.count - b.count);
     let {element, count} = list[0];
     for (const item of list) {
-        if (item.count > count * 1.5) {
+        if (item.count > count * 1.5 && count < 200) {
             element = item.element;
         }
         count = item.count;
@@ -82,9 +84,11 @@ function parseChapters(url: string, dom: Document): Chapter[] {
 }
 
 export async function fetchBook(url): Promise<Book> {
+    const t0 = Date.now();
     const dom = await fetchDOM(url);
+    const t1 = Date.now();
     const book = parseBookInfo(dom);
     const chapters = parseChapters(url, dom);
-    book.sources = [{url, chapters}];
+    book.sources = [{url, chapters, latency: t1 - t0}];
     return book;
 }

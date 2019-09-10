@@ -1,1 +1,24 @@
-<div>Hello!</div>
+<div style="display: flex;flex-direction: row;height: 100%">
+    <div style="width: 30vw;">
+        <div>
+            <input type="search" [(ngModel)]="keyword">
+            <button (click)="search()">Search</button>
+        </div>
+        <div>
+            <img src="{{book?.information?.cover}}">
+            <h3>{{book?.title}}</h3>
+            <h4>{{book?.author}} &nbsp; {{book?.information?.category}}</h4>
+            <p>{{book?.information?.description}}</p>
+        </div>
+        <div>
+            <ul style="height: 50vh;overflow: scroll">
+                <li *ngFor="let chapter of book?.sources[0].chapters, let i=index" (click)="show(i)">
+                    {{chapter.title}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div style="flex-grow: 1;height: 80vh;overflow: scroll;margin-left: 15px">
+        <p *ngFor="let line of lines">{{line}}</p>
+    </div>
+</div>
