@@ -1,5 +1,5 @@
 <div style="display: flex;flex-direction: row;height: 100%">
-    <div style="width: 30vw;">
+    <div style="min-width: 200px;max-width: 200px">
         <div>
             <input type="search" [(ngModel)]="keyword">
             <button (click)="search()">Search</button>
@@ -10,13 +10,13 @@
             <h4>{{book?.author}} &nbsp; {{book?.information?.category}}</h4>
             <p>{{book?.information?.description}}</p>
         </div>
-        <div>
-            <ul style="height: 50vh;overflow: scroll">
-                <li *ngFor="let chapter of book?.sources[0].chapters, let i=index" (click)="show(i)">
-                    {{chapter.title}}
-                </li>
-            </ul>
-        </div>
+    </div>
+    <div>
+        <ul style="width: 300px; height: 80vh;overflow: scroll">
+            <li *ngFor="let chapter of book?.sources[0].chapters, let i=index" (click)="show(i)">
+                {{chapter.title}}
+            </li>
+        </ul>
     </div>
     <div style="flex-grow: 1;height: 80vh;overflow: scroll;margin-left: 15px">
         <p *ngFor="let line of lines">{{line}}</p>
