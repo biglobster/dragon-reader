@@ -26,7 +26,7 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
             }
         }
         const contents = await Promise.all(tasks);
-        const lens = contents.map(content => content.join().length);
+        const lens = contents.map(content => content.length);
         const avg = lens.reduce((x, y) => x + y, 0) / sources.length;
         const delta = lens.map(len => len - avg);
         delta.map((d, index) => qualities[index] += d);
@@ -35,7 +35,7 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
     const set = new DisjointSet(qualities);
     for (let i = 0; i < qualities.length; i++) {
         for (let j = i + 1; j < qualities.length; j++) {
-            if (qualities[i] / qualities[j] < 1.1 && qualities[i] / qualities[j] > 0.9) {
+            if (Math.abs(qualities[i] - qualities[j]) < 20) {
                 set.merge(qualities[i], qualities[j]);
             }
         }
@@ -55,13 +55,13 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
             bestGroup = group;
         }
     }
-    // for (let i = 0; i < qualities.length; i++) {
-    //     if (set.find(qualities[i]) === bestGroup) {
-    //         console.log('SUCC', sources[i]);
-    //     } else {
-    //         console.warn('FAIL', sources[i]);
-    //     }
-    // }
+    for (let i = 0; i < qualities.length; i++) {
+        if (set.find(qualities[i]) === bestGroup) {
+            console.log('SUCC', qualities[i], sources[i]);
+        } else {
+            console.log('FAIL', qualities[i], sources[i]);
+        }
+    }
     return sources.filter((source, index) => set.find(qualities[index]) === bestGroup);
 }
 
@@ -77,11 +77,6 @@ export async function mergeBook(books: Book[]): Promise<Book> {
     let sources: Source[] = [];
     for (const book of books) {
         sources.push(...book.sources);
-    }
-    for (const source of sources) {
-        for (const chapter of source.chapters) {
-            chapter.normlizeTitle = normalizeChapter(chapter.title);
-        }
     }
     sources = await selectBestSources(sources);
     sources.sort((a, b) => a.latency - b.latency);

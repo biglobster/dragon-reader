@@ -68,7 +68,7 @@ export async function searchKeyword(keyword) {
     const tasks: [string, Promise<SearchResult[]>][] = [];
     for (const config of [sogou, qihu, bing]) {
         for (const page of [1, 2, 3]) {
-            tasks.push([config.name + page, searchOnSearchEngine(`${keyword} 小说 在线阅读`, config, page)]);
+            tasks.push([config.name + page, searchOnSearchEngine(`${keyword} 小说在线阅读`, config, page)]);
         }
     }
     let results: SearchResult[] = [];

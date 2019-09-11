@@ -43,7 +43,7 @@ export async function fetchContent(url: string): Promise<string[]> {
     list.sort((a, b) => a.count - b.count);
     let {element, count} = list[0];
     for (const item of list) {
-        if (item.count > count * 1.5 && count <= 1000) {
+        if (item.count > count * 2) {
             element = item.element;
         }
         count = item.count;

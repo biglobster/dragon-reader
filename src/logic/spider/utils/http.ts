@@ -21,7 +21,7 @@ async function blobToText(blob: Blob, encoding: string): Promise<string> {
 }
 
 export async function fetchDOM(url: string, retry: number = 0): Promise<Document> {
-    const blob = await fetchWithTimeout(url, 2000);
+    const blob = await fetchWithTimeout(url, 3000);
     const html1 = await blobToText(blob, 'utf-8');
     const dom = new DOMParser().parseFromString(html1, 'text/html');
     let charset = null;

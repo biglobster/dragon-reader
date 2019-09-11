@@ -4,6 +4,7 @@ import urlResolve from 'url-resolve-browser';
 import {Book, Chapter} from '../../define';
 import {nodeListToArray} from '../utils/dom';
 import {fetchDOM} from '../utils/http';
+import {normalizeChapter} from './chapter-normalize';
 
 function parseBookInfo(dom: Document): Book {
     const domMeta = new Map<string, string>();
@@ -81,6 +82,9 @@ function parseChapters(url: string, dom: Document): Chapter[] {
         }
     }
     chapters.reverse();
+    for (const chapter of chapters) {
+        chapter.normlizeTitle = normalizeChapter(chapter.title);
+    }
     return chapters;
 }
 

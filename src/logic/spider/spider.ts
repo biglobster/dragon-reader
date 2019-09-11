@@ -29,7 +29,9 @@ export class Spider {
                 tasks.push(fetchContent(sources[i].chapters[positions[i]].url).catch(() => null));
             }
         }
+        console.log(positions.map((position, index) => sources[index].chapters[position]));
         const contents = await Promise.all(tasks);
+        console.log(contents);
         let baseContent = contents[mainSourceIndex];
         for (let i = 0; i < sources.length; i++) {
             if (i === mainSourceIndex) {
