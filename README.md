@@ -1,19 +1,34 @@
-# DragonReader
+# DragonReader - 青龙小说下载阅读器
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.2.
+`青龙小说` 是一个基于其他搜索引擎构建的小说预览工具，目的是让阅读更简单、优雅，让每位读者都有舒适的阅读体验
 
-## Development server
+> 注意：若将本项目发行，请声明来源，本项目纯属共享学习之用，不得用于商业！
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## 特色
+* 无需写任何特定源解析规则（含用户及开发者），仅依赖bing/sogou/360三个搜索引擎
+* 丰富的资源，涵盖网络小说、女频小说、经典小说等
+* 自动精校，去除大部分文字级别的小广告（如xxx手打网推荐）
+* 跨平台，iOS/MacOS/Android/Windows/Linux（感谢Cordova和Electron）
+* 纯客户端运行，无需部署任何服务器
 
-## Code scaffolding
+## 技术
+使用TypeScript + Angular + Electron / Cordova
+更详细的文档待编写
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 进度
 
-## Build
+- [X] 爬虫核心（搜索、下载、精校）
+- [ ] 其他大部分功能 :)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## 如何运行
+> 当前仅有少部分功能可以运行
 
-## Further help
+初次配置
+1. 确保NodeJS已安装，版本10+
+2. 确保Electron已安装，安装指令 `npm i -g electron`
+3. 确保Angular已安装，安装指令 `npm i -g @angular/cli`
+4. 在项目目录下，安装依赖库`npm i`
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+每次运行
+1. 在项目目录下，运行`ng serve`
+2. 在项目目录下，另启一个命令行，运行`electron index`
