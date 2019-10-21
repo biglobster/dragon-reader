@@ -4,34 +4,27 @@ import {selectBestGroup} from './components/group-books';
 import {mergeBook} from './components/merge-books';
 import {findChapters} from './components/find-chapter';
 import {filterContent} from './components/content-filter';
-import {fetchContent} from './components/fetch-content';
-import {fetchBook} from './components/fetch-book';
+import {extractBook} from './components/extract-book';
+import {extractContent} from './components/extract-content';
 
-export class Spider {
-    async fetchBook(keyword): Promise<Book> {
+export class SpiderA {
+    static async fetchBook(keyword): Promise<Book> {
         const searchResults = await searchKeyword(keyword);
-        let books: Book[] = await Promise.all(searchResults.map(searchResult => fetchBook(searchResult.url).catch(e => null)));
-        console.log(books);
-        books = selectBestGroup(books.filter(x => x));
-        console.log(books);
-        const book = await mergeBook(books);
-        console.log(book);
-        return book;
+        const books: Book[] = await Promise.all(searchResults.map(searchResult => extractBook(searchResult.url).catch(() => null)));
+        return await mergeBook(selectBestGroup(books.filter(x => x)));
     }
 
-    async fetchContent(sources: Source[], mainSourceIndex: number, mainChapterIndex: number): Promise<string[]> {
+    static async fetchContent(sources: Source[], mainSourceIndex: number, mainChapterIndex: number): Promise<string[]> {
         const positions = findChapters(sources, mainSourceIndex, mainChapterIndex);
         const tasks = [];
         for (let i = 0; i < sources.length; i++) {
             if (positions[i] == null) {
                 tasks.push(Promise.resolve(null));
             } else {
-                tasks.push(fetchContent(sources[i].chapters[positions[i]].url).catch(() => null));
+                tasks.push(extractContent(sources[i].chapters[positions[i]].url).catch(() => null));
             }
         }
-        console.log(positions.map((position, index) => sources[index].chapters[position]));
         const contents = await Promise.all(tasks);
-        console.log(contents);
         let baseContent = contents[mainSourceIndex];
         for (let i = 0; i < sources.length; i++) {
             if (i === mainSourceIndex) {

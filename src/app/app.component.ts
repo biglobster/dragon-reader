@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Book} from '../logic/define';
-import {Spider} from '../logic/spider/spider';
+import {SpiderA} from '../logic/spider/spider-a';
 
 @Component({
     selector: 'app-root',
@@ -8,17 +8,15 @@ import {Spider} from '../logic/spider/spider';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    title = 'dragon-reader';
-
     lines: string[];
     book: Book;
     keyword: string;
 
     async search() {
-        this.book = await new Spider().fetchBook(this.keyword);
+        this.book = await SpiderA.fetchBook(this.keyword);
     }
 
     async show(index) {
-        this.lines = await new Spider().fetchContent(this.book.sources, 0, index);
+        this.lines = await SpiderA.fetchContent(this.book.sources, 0, index);
     }
 }

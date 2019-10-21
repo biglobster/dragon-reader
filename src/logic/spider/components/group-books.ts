@@ -39,8 +39,8 @@ export function groupBooks(books: Book[]): Array<Book[]> {
             if (delta / max > 0.2) {
                 continue;
             }
-            const strX = x.sources[0].chapters.map(item => item.normlizeTitle).join();
-            const strY = y.sources[0].chapters.map(item => item.normlizeTitle).join();
+            const strX = x.sources[0].chapters.map(item => item.normalizedTitle).join();
+            const strY = y.sources[0].chapters.map(item => item.normalizedTitle).join();
             if (!maybeSimilar(strX, strY)) {
                 continue;
             }

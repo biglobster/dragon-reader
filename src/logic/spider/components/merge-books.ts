@@ -1,12 +1,9 @@
-import uuid from 'uuid';
 import {Book, BookInformation, Source} from '../../define';
-import {normalizeChapter} from './chapter-normalize';
 import {findChapters} from './find-chapter';
-import {fetchContent} from './fetch-content';
+import {extractContent} from './extract-content';
 import {DisjointSet} from '../utils/algorithm';
 
 async function selectBestSources(sources: Source[]): Promise<Source[]> {
-
     const mainPositions = [
         Math.round(sources[0].chapters.length * 0.3),
         Math.round(sources[0].chapters.length * 0.6),
@@ -22,7 +19,7 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
             if (!chapter) {
                 tasks.push([]);
             } else {
-                tasks.push(fetchContent(chapter.url).catch(e => []));
+                tasks.push(extractContent(chapter.url).catch(() => []));
             }
         }
         const contents = await Promise.all(tasks);
@@ -82,7 +79,6 @@ export async function mergeBook(books: Book[]): Promise<Book> {
     sources.sort((a, b) => a.latency - b.latency);
     sources = sources.slice(0, 5);
     return {
-        _id: uuid.v4(),
         title: information.title || '无标题',
         author: information.author || '佚名',
         information,

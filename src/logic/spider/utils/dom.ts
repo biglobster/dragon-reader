@@ -6,31 +6,6 @@ export function nodeListToArray<E extends Node>(list: NodeListOf<E>): Array<E> {
     return result;
 }
 
-export function queryOne(element: Element | Document, query: string): Element {
-    return element.querySelector(query);
-}
-
-export function queryChild(element: Element | Document): Element[] {
-    if (!element) {
-        return [];
-    }
-    const result: Element[] = [];
-    const elements = element.childNodes;
-    for (let i = 0; i < elements.length; i++) {
-        result.push(elements.item(i) as Element);
-    }
-    return result;
-}
-
-export function queryAll(element: Element | Document, query: string): Element[] {
-    const result = [];
-    const elements = element.querySelectorAll(query);
-    for (let i = 0; i < elements.length; i++) {
-        result.push(elements.item(i));
-    }
-    return result;
-}
-
 export function pureText(element: Element) {
     if (element && element.textContent) {
         if (element.nodeType === Node.COMMENT_NODE) {
@@ -48,7 +23,51 @@ export function pureAttr(element: Element, name: string) {
     return null;
 }
 
-export function pureUrl(base: string, current: string): string {
-    return new URL(current, base).href;
+function fetchWithTimeout(url: string, timeout: number): Promise<Blob> {
+    // TODO for cordova
+    return Promise.race([
+        fetch(url).then(response => response.blob()),
+        new Promise((resolve, reject) => setTimeout(() => reject('timeout ' + url), timeout))
+    ]) as Promise<Blob>;
 }
 
+async function blobToText(blob: Blob, encoding: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            resolve(reader.result as string);
+        };
+        reader.onerror = () => {
+            reject('decode blob failure, encoding=' + encoding);
+        };
+        reader.readAsText(blob, encoding);
+    });
+}
+
+export async function fetchDOM(url: string): Promise<Document> {
+    const blob = await fetchWithTimeout(url, 3000);
+    const html1 = await blobToText(blob, 'utf-8');
+    const dom = new DOMParser().parseFromString(html1, 'text/html');
+    let charset = null;
+    try {
+        charset = dom.head.querySelector('[charset]').getAttribute('charset');
+    } catch (e) {
+    }
+    if (!charset) {
+        try {
+            for (const m of nodeListToArray(dom.head.querySelectorAll('meta'))) {
+                if (m.getAttribute('http-equiv') === 'Content-Type') {
+                    const c = m.getAttribute('content');
+                    const i = c.indexOf('charset=');
+                    charset = c.slice(i + 8);
+                }
+            }
+        } catch (e) {
+        }
+    }
+    if (charset === 'utf-8' || !charset) {
+        return dom;
+    }
+    const html2 = await blobToText(blob, charset);
+    return new DOMParser().parseFromString(html2, 'text/html');
+}

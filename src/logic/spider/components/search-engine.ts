@@ -1,5 +1,4 @@
-import {nodeListToArray, pureAttr, pureText} from '../utils/dom';
-import {fetchDOM} from '../utils/http';
+import {fetchDOM, nodeListToArray, pureAttr, pureText} from '../utils/dom';
 import {SearchResult} from '../../define';
 import {invokeAll} from '../utils/invoke';
 
@@ -67,8 +66,13 @@ function filterRepeatSite(input: SearchResult[]): SearchResult[] {
 export async function searchKeyword(keyword) {
     const tasks: [string, Promise<SearchResult[]>][] = [];
     for (const config of [sogou, qihu, bing]) {
-        for (const page of [1, 2, 3]) {
-            tasks.push([config.name + page, searchOnSearchEngine(`${keyword} 小说在线阅读`, config, page)]);
+        for (const page of [1]) {
+            tasks.push([config.name + page, searchOnSearchEngine(`${keyword} 笔趣阁`, config, page)]);
+        }
+    }
+    for (const config of [sogou, qihu, bing]) {
+        for (const page of [1]) {
+            tasks.push([config.name + page, searchOnSearchEngine(`${keyword} 顶点小说`, config, page)]);
         }
     }
     let results: SearchResult[] = [];

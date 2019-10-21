@@ -5,7 +5,6 @@ export interface SearchResult {
 }
 
 export interface Book {
-    _id: string;    // 数据库标记
     title: string;  // 标题
     author: string; // 作者
     information?: BookInformation; // 信息
@@ -30,6 +29,6 @@ export interface Source {
 
 export interface Chapter {
     title: string; // 章节名
-    normlizeTitle?: string; // 标准化章节名
+    normalizedTitle?: string; // 标准化章节名
     url: string; // 链接
 }

@@ -1,9 +1,7 @@
-import uuid from 'uuid';
 import urlResolve from 'url-resolve-browser';
 
 import {Book, Chapter} from '../../define';
-import {nodeListToArray} from '../utils/dom';
-import {fetchDOM} from '../utils/http';
+import {fetchDOM, nodeListToArray} from '../utils/dom';
 import {normalizeChapter} from './chapter-normalize';
 
 function parseBookInfo(dom: Document): Book {
@@ -16,7 +14,6 @@ function parseBookInfo(dom: Document): Book {
         }
     }
     return {
-        _id: uuid.v4(),
         title: null,
         author: null,
         information: {
@@ -83,12 +80,12 @@ function parseChapters(url: string, dom: Document): Chapter[] {
     }
     chapters.reverse();
     for (const chapter of chapters) {
-        chapter.normlizeTitle = normalizeChapter(chapter.title);
+        chapter.normalizedTitle = normalizeChapter(chapter.title);
     }
     return chapters;
 }
 
-export async function fetchBook(url): Promise<Book> {
+export async function extractBook(url): Promise<Book> {
     const t0 = Date.now();
     const dom = await fetchDOM(url);
     const t1 = Date.now();

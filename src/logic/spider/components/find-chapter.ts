@@ -21,8 +21,8 @@ export function findChapters(sources: Source[], mainSourceIndex: number, mainCha
                     continue;
                 }
                 const refChapter = source.chapters[y1];
-                if (baseChapter.normlizeTitle.indexOf(refChapter.normlizeTitle) !== -1
-                    || refChapter.normlizeTitle.indexOf(baseChapter.normlizeTitle) !== -1) {
+                if (baseChapter.normalizedTitle.indexOf(refChapter.normalizedTitle) !== -1
+                    || refChapter.normalizedTitle.indexOf(baseChapter.normalizedTitle) !== -1) {
                     position = y1;
                 }
             }
