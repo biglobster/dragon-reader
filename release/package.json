@@ -1,0 +1,34 @@
+{
+  "name": "dragon-reader",
+  "version": "0.1.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "pom",
+    "email": "wse.pom@gmail.com"
+  },
+  "license": "ISC",
+  "build": {
+    "productName": "青龙阅读器",
+    "electronVersion": "4.1.3",
+    "mac": {
+      "target": [
+        {
+          "target": "DMG",
+          "arch": "x64"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": "x64"
+        }
+      ]
+    }
+  }
+}

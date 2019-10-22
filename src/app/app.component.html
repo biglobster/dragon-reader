@@ -1,10 +1,13 @@
+<div>仅供测试，请勿外传，谢谢：）</div>
 <div style="display: flex;flex-direction: row;height: 100%">
     <div style="min-width: 200px;max-width: 200px">
         <div>
             <input type="search" [(ngModel)]="keyword">
             <button (click)="search()">Search</button>
         </div>
+        <div>{{log}}</div>
         <div>
+            <button *ngIf="book" style="color: red" (click)="download()">下载</button>
             <img src="{{book?.information?.cover}}" style="width: 200px;">
             <h3>{{book?.title}}</h3>
             <h4>{{book?.author}} &nbsp; {{book?.information?.category}}</h4>
