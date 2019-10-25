@@ -14,7 +14,7 @@ function createWindow() {
         pathname: path.join(__dirname, 'app/index.html'),
         protocol: 'file:',
         slashes: true
-    }))
+    }));
 }
 
 var template = [{
