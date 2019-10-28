@@ -64,8 +64,7 @@ export function groupBooks(books: Book[]): Array<Book[]> {
     return result;
 }
 
-export function selectBestGroup(books: Book[]): Book[] {
-    const bookGroups = groupBooks(books);
+export function selectBestGroup(bookGroups: Array<Book[]>): Book[] {
     let bestGroup = null;
     for (const bookGroup of bookGroups) {
         if (bestGroup == null || bestGroup.length < bookGroup.length) {

@@ -1,27 +1,106 @@
-<div>仅供测试，请勿外传，谢谢：）</div>
-<div style="display: flex;flex-direction: row;height: 100%">
-    <div style="min-width: 200px;max-width: 200px">
-        <div>
-            <input type="search" [(ngModel)]="keyword">
-            <button (click)="search()">Search</button>
-        </div>
-        <div>{{log}}</div>
-        <div>
-            <button *ngIf="book" style="color: red" (click)="download()">下载</button>
-            <img src="{{book?.information?.cover}}" style="width: 200px;">
-            <h3>{{book?.title}}</h3>
-            <h4>{{book?.author}} &nbsp; {{book?.information?.category}}</h4>
-            <p>{{book?.information?.description}}</p>
-        </div>
-    </div>
-    <div>
-        <ul style="width: 300px; height: 80vh;overflow: scroll">
-            <li *ngFor="let chapter of book?.sources[0].chapters, let i=index" (click)="show(i)">
-                {{chapter.title}}
-            </li>
-        </ul>
-    </div>
-    <div style="flex-grow: 1;height: 80vh;overflow: scroll;margin-left: 15px">
-        <p *ngFor="let line of lines">{{line}}</p>
-    </div>
+<mat-toolbar>
+    <h1>（仅用测试，请勿外传）</h1>
+</mat-toolbar>
+<div>
+    <mat-card color="primary" style="margin: 10px">
+        <mat-card-title>操作区域</mat-card-title>
+        <mat-card-content>
+            <mat-form-field style="width: 100%">
+                <input matInput color="primary" placeholder="输入小说全名进行搜索" [(ngModel)]="keyword"
+                       (keyup.enter)="search()">
+                <button mat-button matSuffix color="primary" (click)="search()">搜索</button>
+                <mat-hint>输入全名搜索更精准，如果有多本书名字相同，可以额外追加作者名</mat-hint>
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+    <mat-card color="primary" style="margin: 10px">
+        <mat-card-title>当前进度</mat-card-title>
+        <mat-card-content>
+            <mat-chip-list multiple>
+                <mat-chip [selected]="step >= 1">Step1: 寻找候选源列表</mat-chip>
+                <mat-chip [selected]="step >= 2">Step2: 依据章节列表过滤源</mat-chip>
+                <mat-chip [selected]="step >= 3">Step3: 依据文本内容过滤源</mat-chip>
+                <mat-chip [selected]="step >= 4">Step4: 搜索完成，提取信息成为书籍</mat-chip>
+            </mat-chip-list>
+        </mat-card-content>
+        <mat-card-footer>
+            <mat-progress-bar mode="determinate" value="100" *ngIf="step === 0 || step === 4"></mat-progress-bar>
+            <mat-progress-bar mode="indeterminate" *ngIf="step > 0 && step < 4"></mat-progress-bar>
+        </mat-card-footer>
+    </mat-card>
+
+    <mat-card style="margin: 10px">
+        <mat-card-title> Step 1: 搜索结果</mat-card-title>
+        <mat-card-content>
+            <mat-grid-list cols="4" rowHeight="60px">
+                <mat-grid-tile *ngFor="let result of searchResults, let i = index">
+                    <button mat-button
+                            matTooltip="{{result.title + ' @ ' + result.url}}"
+                            (click)="open(result.url)"
+                    >{{result.title}} <br> {{result.engine}}</button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card style="margin: 10px">
+        <mat-card-title>Step 2: 按章节过滤结果</mat-card-title>
+        <mat-card-content>
+            <div *ngFor="let group of bookGroups" style="margin-top: 10px">
+                <span *ngIf="group == bestGroup"><b>=></b></span>
+                本分组共{{group.length}}个链接：
+                <mat-grid-list cols="4" rowHeight="30px">
+                    <mat-grid-tile *ngFor="let book of group, let i = index">
+                        <button mat-button
+                                matTooltip="{{book.sources[0].url}}"
+                                (click)="open(book.sources[0].url)"
+                        >{{book.sources[0].url}}</button>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card style="margin: 10px">
+        <mat-card-title>Step 3: 按内容过滤结果</mat-card-title>
+        <mat-card-content>
+            <mat-grid-list cols="2" rowHeight="30px">
+                <mat-grid-tile *ngFor="let b of bestGroup, let i = index">
+                    <button mat-button
+                            matTooltip="{{b.sources[0].url}}"
+                            color="{{book && book.sources.indexOf(b.sources[0]) != -1 && 'primary'}}"
+                            (click)="open(b.sources[0].url)"
+                    >{{b.sources[0].url}}</button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card style="margin: 10px">
+        <mat-card-title>Step 4: 合并成为书籍</mat-card-title>
+        <mat-card-content *ngIf="book">
+            <div style="display: flex;flex-direction: row;">
+                <div><img style="max-width: 200px; padding: 10px" src="{{book.information.cover}}" alt="封面"></div>
+                <div>
+                    <h4>书名：{{book.title}}</h4>
+                    <div>作者：{{book.author}}</div>
+                    <div>分类：{{book.information.category}}</div>
+                    <p>描述：{{book.information.description}}</p>
+                    <button mat-button color="primary" (click)="download()">导出到TXT</button>
+                    <div>{{log}}</div>
+                </div>
+                <div>
+                    源列表：
+                    <div *ngFor="let source of book.sources">
+                        <button mat-button
+                                matTooltip="{{book.sources[0].url}}"
+                                (click)="open(source.url)"
+                        >{{source.url}}</button>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
 </div>
+
+

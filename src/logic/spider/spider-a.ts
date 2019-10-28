@@ -1,6 +1,6 @@
 import {Book, Source} from '../define';
 import {searchKeyword} from './components/search-engine';
-import {selectBestGroup} from './components/group-books';
+import {selectBestGroup, groupBooks} from './components/group-books';
 import {mergeBook} from './components/merge-books';
 import {findChapters} from './components/find-chapter';
 import {filterContent} from './components/content-filter';
@@ -11,7 +11,7 @@ export class SpiderA {
     static async fetchBook(keyword): Promise<Book> {
         const searchResults = await searchKeyword(keyword);
         const books: Book[] = await Promise.all(searchResults.map(searchResult => extractBook(searchResult.url).catch(() => null)));
-        return await mergeBook(selectBestGroup(books.filter(x => x)));
+        return await mergeBook(selectBestGroup(groupBooks(books.filter(x => x && x.sources))));
     }
 
     static async fetchContent(sources: Source[], mainSourceIndex: number, mainChapterIndex: number): Promise<string[]> {

@@ -1,5 +1,9 @@
 import {Component} from '@angular/core';
-import {Book} from '../logic/define';
+import {searchKeyword} from '../logic/spider/components/search-engine';
+import {Book, SearchResult} from '../logic/define';
+import {extractBook} from '../logic/spider/components/extract-book';
+import {groupBooks, selectBestGroup} from '../logic/spider/components/group-books';
+import {mergeBook} from '../logic/spider/components/merge-books';
 import {SpiderA} from '../logic/spider/spider-a';
 
 @Component({
@@ -8,19 +12,37 @@ import {SpiderA} from '../logic/spider/spider-a';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    lines: string[];
+    step: number = 0;
+    keyword: string = '大主宰';
+    searchResults: SearchResult[];
+    bookGroups: Array<Book[]>;
+    bestGroup: Book[];
     book: Book;
-    keyword: string;
     log: string;
 
+
     async search() {
-        this.log = '搜索中，大约需要10秒钟。。。';
-        this.book = await SpiderA.fetchBook(this.keyword);
-        this.log = '搜索完成';
+        console.log('search', this.keyword);
+        if (!this.keyword || !this.keyword.trim()) {
+            return;
+        }
+        try {
+            this.step = 1;
+            this.searchResults = await searchKeyword(this.keyword);
+            this.step = 2;
+            const books: Book[] = await Promise.all(this.searchResults.map(searchResult => extractBook(searchResult.url).catch(() => null)));
+            this.bookGroups = groupBooks(books.filter(book => book && book.sources));
+            this.bestGroup = selectBestGroup(this.bookGroups);
+            this.step = 3;
+            this.book = await mergeBook(this.bestGroup);
+            this.step = 4;
+        } finally {
+
+        }
     }
 
-    async show(index) {
-        this.lines = await SpiderA.fetchContent(this.book.sources, 0, index);
+    async open(url: string) {
+        (window as any).require('electron').shell.openExternal(url);
     }
 
     async download() {
@@ -40,6 +62,6 @@ export class AppComponent {
         }
         const text = content.join('\n');
         (window as any).require('fs').writeFileSync(`${(window as any).require('os').homedir()}/Desktop/${this.book.title}.txt`, text);
-        this.log = `下载完成`;
+        this.log = `下载完成，文件已保存到桌面`;
     }
 }
