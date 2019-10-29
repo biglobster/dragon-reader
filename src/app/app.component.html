@@ -31,13 +31,13 @@
 
     <mat-card style="margin: 10px">
         <mat-card-title> Step 1: 搜索结果</mat-card-title>
-        <mat-card-content>
+        <mat-card-content *ngIf="step >= 1">
             <mat-grid-list cols="4" rowHeight="60px">
                 <mat-grid-tile *ngFor="let result of searchResults, let i = index">
                     <button mat-button
-                            matTooltip="{{result.title + ' @ ' + result.url}}"
+                            matTooltip="{{result.title + ' @ ' + result.engine}}"
                             (click)="open(result.url)"
-                    >{{result.title}} <br> {{result.engine}}</button>
+                    >{{result.url}}</button>
                 </mat-grid-tile>
             </mat-grid-list>
         </mat-card-content>
@@ -45,7 +45,7 @@
 
     <mat-card style="margin: 10px">
         <mat-card-title>Step 2: 按章节过滤结果</mat-card-title>
-        <mat-card-content>
+        <mat-card-content *ngIf="step >= 2">
             <div *ngFor="let group of bookGroups" style="margin-top: 10px">
                 <span *ngIf="group == bestGroup"><b>=></b></span>
                 本分组共{{group.length}}个链接：
@@ -63,12 +63,12 @@
 
     <mat-card style="margin: 10px">
         <mat-card-title>Step 3: 按内容过滤结果</mat-card-title>
-        <mat-card-content>
+        <mat-card-content *ngIf="step >= 3">
             <mat-grid-list cols="2" rowHeight="30px">
                 <mat-grid-tile *ngFor="let b of bestGroup, let i = index">
                     <button mat-button
                             matTooltip="{{b.sources[0].url}}"
-                            color="{{book && book.sources.indexOf(b.sources[0]) != -1 && 'primary'}}"
+                            color="{{book && book.sources.indexOf(b.sources[0]) != -1 ? 'primary' : 'warn'}}"
                             (click)="open(b.sources[0].url)"
                     >{{b.sources[0].url}}</button>
                 </mat-grid-tile>
@@ -78,7 +78,7 @@
 
     <mat-card style="margin: 10px">
         <mat-card-title>Step 4: 合并成为书籍</mat-card-title>
-        <mat-card-content *ngIf="book">
+        <mat-card-content *ngIf="book && step >= 4">
             <div style="display: flex;flex-direction: row;">
                 <div><img style="max-width: 200px; padding: 10px" src="{{book.information.cover}}" alt="封面"></div>
                 <div>
@@ -101,6 +101,34 @@
             </div>
         </mat-card-content>
     </mat-card>
+    <mat-card style="margin: 10px">
+        <mat-card-title>目录及内容</mat-card-title>
+        <mat-card-content *ngIf="book && step >= 4">
+            <div style="display: flex;flex-direction: row">
+                <cdk-virtual-scroll-viewport itemSize="40" minBufferPx="600" maxBufferPx="1200"
+                                             style="min-width: 300px; height: 800px;">
+                    <div *cdkVirtualFor="let item of book.sources[0].chapters;let i = index" style="height: 40px">
+                        <button mat-button (click)="showLines(i)">{{item.title}}</button>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+                <div style="flex-grow: 1; max-height: 800px;height: 800px; overflow: scroll; text-align: justify;padding: 10px 20px;">
+                    <p style="" *ngFor="let line of lines">{{line}}</p>
+                </div>
+                <div style="min-width: 80px">
+                    内容来源：
+                    <mat-list>
+                        <div mat-list-item *ngFor="let originUrl of originUrls; let i = index">
+                            <button mat-button (click)="open(originUrl)">源{{i + 1}}</button>
+                        </div>
+                    </mat-list>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
 </div>
 
+<button mat-fab color="primary" style="position:fixed;right: 20px;bottom: 20px" (click)="exportInformation()"
+        matTooltip="点击导出运行日志">
+    <mat-icon>save</mat-icon>
+</button>
 
