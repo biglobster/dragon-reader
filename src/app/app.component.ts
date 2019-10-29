@@ -14,18 +14,18 @@ import {MatSnackBar} from '@angular/material';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    busy: boolean = false;
-    step: number = 0;
-    keyword: string = '大主宰';
+    busy = false;
+    step = 0;
+    keyword = '大主宰';
     searchResults: SearchResult[];
     bookGroups: Array<Book[]>;
     bestGroup: Book[];
     book: Book;
     log: string;
-    lines: string;
+    lines: string[];
     originUrls: string[];
 
-    constructor(private _snackBar: MatSnackBar) {
+    constructor(private snackBar: MatSnackBar) {
     }
 
     async search() {
@@ -38,7 +38,8 @@ export class AppComponent {
             this.step = 1;
             this.searchResults = await searchKeyword(this.keyword);
             this.step = 2;
-            const books: Book[] = await Promise.all(this.searchResults.map(searchResult => extractBook(searchResult.url).catch(() => null)));
+            const books: Book[] = await Promise.all(this.searchResults
+                .map(searchResult => extractBook(searchResult.url).catch(() => null)));
             this.bookGroups = groupBooks(books.filter(book => book && book.sources));
             this.bestGroup = selectBestGroup(this.bookGroups);
             this.step = 3;
@@ -76,7 +77,9 @@ export class AppComponent {
             }
         }
         const text = content.join('\n');
-        (window as any).require('fs').writeFileSync(`${(window as any).require('os').homedir()}/Desktop/${this.book.title}.txt`, text);
+        (window as any).require('fs')
+            .writeFileSync(`${(window as any).require('os').homedir()}/Desktop/${this.book.title}.txt`,
+                text);
         this.log = `下载完成，文件已保存到桌面`;
     }
 
@@ -88,7 +91,8 @@ export class AppComponent {
             originUrls: this.originUrls
         };
         (window as any).require('fs')
-            .writeFileSync(`${(window as any).require('os').homedir()}/Desktop/青龙日志${Date.now()}.json`, JSON.stringify(information));
-        this._snackBar.open('日志已保存到桌面');
+            .writeFileSync(`${(window as any).require('os').homedir()}/Desktop/青龙日志${Date.now()}.json`,
+                JSON.stringify(information));
+        this.snackBar.open('日志已保存到桌面');
     }
 }
