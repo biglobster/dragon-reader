@@ -50,11 +50,11 @@ function filterRepeatSite(input: SearchResult[]): SearchResult[] {
     const output = [];
     for (const x of input) {
         try {
-            const origin = new URL(x.url).origin;
-            if (set.has(origin)) {
+            const host = new URL(x.url).host;
+            if (set.has(host)) {
                 continue;
             }
-            set.add(origin);
+            set.add(host);
             output.push(x);
         } catch (e) {
 
