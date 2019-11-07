@@ -63,6 +63,7 @@ async function selectBestSources(sources: Source[]): Promise<Source[]> {
 }
 
 export async function mergeBook(books: Book[]): Promise<Book> {
+    console.log(books);
     const information: BookInformation = {};
     for (const book of books) {
         for (const key in book.information) {

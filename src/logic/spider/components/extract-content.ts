@@ -41,7 +41,7 @@ function calculateCounts(current: ChildNode, depth: number): [number, number, nu
 
 function nodeToArray(current: ChildNode) {
     const array = [];
-    if (['A', 'BUTTON'].indexOf((current as any).tagName) !== -1) {
+    if (['A', 'BUTTON', 'SCRIPT'].indexOf((current as any).tagName) !== -1) {
         return [];
     }
     for (const element of nodeListToArray(current.childNodes)) {
