@@ -7,8 +7,8 @@ export function filterContent(baseContent: string[], refContent: string[]): stri
     const splitSign = '，';
     const baseSentence = baseContent.join('').split(splitSign);
     const refSentence = refContent.join('').split(splitSign);
-    const baseSet = new Set<String>();
-    const commonSet = new Set<String>();
+    const baseSet = new Set<string>();
+    const commonSet = new Set<string>();
     for (const sentence of baseSentence) {
         baseSet.add(sentence);
     }
@@ -30,7 +30,7 @@ export function filterContent(baseContent: string[], refContent: string[]): stri
         if (commonSet.has(sentence)) {
             mergedContentStr += sentence + '，';
         } else {
-            for (let c of sentence) {
+            for (const c of sentence) {
                 if (mergedSentenceStr[p] === c) {
                     mergedContentStr += c;
                     p++;
@@ -44,7 +44,7 @@ export function filterContent(baseContent: string[], refContent: string[]): stri
     for (const line of baseContent) {
         let tempLine = '';
         let buf = '';
-        for (let c of line) {
+        for (const c of line) {
             if (mergedContentStr[p2] === c) {
                 if (buf && buf.length < 5) {
                     tempLine += buf;
@@ -56,8 +56,9 @@ export function filterContent(baseContent: string[], refContent: string[]): stri
                 buf += c;
             }
         }
-        if (tempLine)
+        if (tempLine) {
             result.push(tempLine);
+        }
     }
     return result;
 }
