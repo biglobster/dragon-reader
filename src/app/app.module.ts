@@ -15,10 +15,12 @@ import {
 } from '@angular/material';
 
 import {ScrollingModule} from '@angular/cdk/scrolling';
+import { DebugAComponent } from './debug-a/debug-a.component';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        DebugAComponent
     ],
     imports: [
         BrowserModule, FormsModule, BrowserAnimationsModule,
