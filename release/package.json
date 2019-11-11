@@ -13,7 +13,7 @@
   "license": "ISC",
   "build": {
     "productName": "青龙阅读器",
-    "electronVersion": "4.1.3",
+    "electronVersion": "7.1.0",
     "mac": {
       "target": [
         {
